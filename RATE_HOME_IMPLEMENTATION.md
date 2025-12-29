@@ -164,21 +164,78 @@ All tables have:
 - Component memoization
 - Minimal re-renders
 
-## Future Enhancements (Not in Part 1)
+## Part 2 Categories (✅ COMPLETE)
+
+All Part 2 categories have been implemented:
+
+**4. Bathrooms Section** (8 items - Good/Fair/Poor):
+- Fixtures condition, Tiles & grout, Ventilation
+- Water pressure, Storage space, Lighting
+- Shower/tub condition, Vanity & countertops
+
+**5. Home Systems Section** (5 items):
+- HVAC system (Good/Fair/Poor)
+- Electrical system (Good/Fair/Poor)
+- Plumbing system (Good/Fair/Poor)
+- Hot water heater ownership (Radio: Owned/Leased)
+- Hot water heater type (Radio: Tank/Tankless)
+
+**6. Smart Home Features** (6 items - Yes/No checkboxes):
+- Smart thermostat, Smart lights, Smart doorbell
+- Smart locks, Security cameras
+- Other (checkbox with text input)
+
+**7. Additional Features** (6 items - Yes/No checkboxes):
+- Fireplace, Finished basement, Garage
+- Deck, Backyard features
+- Other (checkbox with text input)
+
+**8. Location Section** (11 items - Good/Fair/Poor):
+- Street noise, Privacy, Sunlight, Parking
+- Walkability, Transit access, Schools nearby
+- Grocery stores, Parks & recreation
+- Safety, Neighbourhood feel
+
+**9. Monthly Costs Section** (4 items - Numeric currency inputs):
+- Utilities, Insurance, Condo/POTL fees, Other costs
+
+**10. Other Observations Section** (1 item):
+- General observations (textarea)
+
+### New Input Types Implemented
+
+**Radio Buttons**:
+- Two options side-by-side
+- Used for hot water heater ownership and type
+- Optional notes field included
+
+**Checkboxes**:
+- Simple yes/no selection
+- Used for smart features and additional features
+- No notes field (binary selection)
+
+**Checkbox with Text**:
+- Checkbox that reveals text input when checked
+- Used for "Other" options
+- Allows custom feature descriptions
+
+**Currency Input**:
+- Dollar sign prefix
+- Number input type
+- Used for monthly costs tracking
+
+**Textarea**:
+- Large multi-line text area
+- Used for general observations
+- No character limit on this field
+
+## Future Enhancements
 
 The following features have UI placeholders but aren't implemented:
 - Photo upload functionality
 - Voice note recording
 - Media thumbnail display
 - Media deletion
-
-Additional categories will be added in future parts:
-- Home Systems
-- Location
-- Additional Features
-- Smart Features
-- Monthly Costs
-- Other Observations
 
 ## Testing Checklist
 

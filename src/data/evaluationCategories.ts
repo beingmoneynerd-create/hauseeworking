@@ -58,48 +58,43 @@ export const EVALUATION_CATEGORIES: EvaluationCategory[] = [
     ],
   },
   {
+    id: 'bathrooms',
+    title: 'Bathrooms',
+    icon: 'Droplet',
+    items: [
+      { id: 'bathroom_fixtures', label: 'Fixtures condition', type: 'rating' },
+      { id: 'bathroom_tiles', label: 'Tiles & grout', type: 'rating' },
+      { id: 'bathroom_ventilation', label: 'Ventilation', type: 'rating' },
+      { id: 'bathroom_water_pressure', label: 'Water pressure', type: 'rating' },
+      { id: 'bathroom_storage', label: 'Storage space', type: 'rating' },
+      { id: 'bathroom_lighting', label: 'Lighting', type: 'rating' },
+      { id: 'shower_tub', label: 'Shower/tub condition', type: 'rating' },
+      { id: 'vanity_condition', label: 'Vanity & countertops', type: 'rating' },
+    ],
+  },
+  {
     id: 'home_systems',
     title: 'Home Systems',
     icon: 'Settings',
     items: [
-      { id: 'hvac_furnace', label: 'Furnace Condition', type: 'rating' },
-      { id: 'hvac_ac', label: 'Air Conditioning', type: 'rating' },
-      {
-        id: 'water_heater_type',
-        label: 'Hot Water Heater Type',
-        type: 'dropdown',
-        options: ['Owned', 'Leased'],
-      },
-      {
-        id: 'water_heater_style',
-        label: 'Water Heater Style',
-        type: 'dropdown',
-        options: ['Tank', 'Tankless'],
-      },
-      { id: 'water_heater_condition', label: 'Water Heater Condition', type: 'rating' },
-      { id: 'electrical_panel', label: 'Electrical Panel', type: 'rating' },
-      { id: 'plumbing_visible', label: 'Plumbing (Visible)', type: 'rating' },
-      { id: 'water_pressure', label: 'Water Pressure', type: 'rating' },
-      { id: 'insulation', label: 'Insulation Quality', type: 'rating' },
-      { id: 'ventilation', label: 'Ventilation', type: 'rating' },
-      { id: 'sump_pump', label: 'Sump Pump', type: 'rating' },
+      { id: 'hvac_condition', label: 'HVAC system', type: 'rating' },
+      { id: 'electrical_condition', label: 'Electrical system', type: 'rating' },
+      { id: 'plumbing_condition', label: 'Plumbing system', type: 'rating' },
+      { id: 'water_heater_ownership', label: 'Hot water heater ownership', type: 'radio', options: ['Owned', 'Leased'] },
+      { id: 'water_heater_type', label: 'Hot water heater type', type: 'radio', options: ['Tank', 'Tankless'] },
     ],
   },
   {
-    id: 'location',
-    title: 'Location',
-    icon: 'MapPin',
+    id: 'smart_features',
+    title: 'Smart Home Features',
+    icon: 'Smartphone',
     items: [
-      { id: 'neighborhood_safety', label: 'Neighborhood Safety', type: 'rating' },
-      { id: 'street_traffic', label: 'Street Traffic Level', type: 'rating' },
-      { id: 'noise_level', label: 'Noise Level', type: 'rating' },
-      { id: 'proximity_amenities', label: 'Proximity to Amenities', type: 'rating' },
-      { id: 'schools_nearby', label: 'Schools Nearby', type: 'rating' },
-      { id: 'public_transit', label: 'Public Transit Access', type: 'rating' },
-      { id: 'parking_availability', label: 'Parking Availability', type: 'rating' },
-      { id: 'walkability', label: 'Walkability Score', type: 'rating' },
-      { id: 'lot_size', label: 'Lot Size', type: 'rating' },
-      { id: 'privacy', label: 'Privacy', type: 'rating' },
+      { id: 'smart_thermostat', label: 'Smart thermostat', type: 'checkbox' },
+      { id: 'smart_lights', label: 'Smart lights', type: 'checkbox' },
+      { id: 'smart_doorbell', label: 'Smart doorbell', type: 'checkbox' },
+      { id: 'smart_locks', label: 'Smart locks', type: 'checkbox' },
+      { id: 'security_cameras', label: 'Security cameras', type: 'checkbox' },
+      { id: 'smart_other', label: 'Other', type: 'checkbox_with_text' },
     ],
   },
   {
@@ -107,27 +102,30 @@ export const EVALUATION_CATEGORIES: EvaluationCategory[] = [
     title: 'Additional Features',
     icon: 'Star',
     items: [
-      { id: 'natural_light', label: 'Natural Light', type: 'rating' },
-      { id: 'views', label: 'Views', type: 'rating' },
-      { id: 'outdoor_space', label: 'Outdoor Space', type: 'rating' },
-      { id: 'storage_space', label: 'Overall Storage', type: 'rating' },
-      { id: 'finished_basement', label: 'Finished Basement', type: 'rating' },
-      { id: 'home_office_space', label: 'Home Office Potential', type: 'rating' },
-      { id: 'energy_efficiency', label: 'Energy Efficiency', type: 'rating' },
-      { id: 'move_in_readiness', label: 'Move-in Readiness', type: 'rating' },
+      { id: 'fireplace', label: 'Fireplace', type: 'checkbox' },
+      { id: 'finished_basement', label: 'Finished basement', type: 'checkbox' },
+      { id: 'garage', label: 'Garage', type: 'checkbox' },
+      { id: 'deck', label: 'Deck', type: 'checkbox' },
+      { id: 'backyard_features', label: 'Backyard features', type: 'checkbox' },
+      { id: 'additional_other', label: 'Other', type: 'checkbox_with_text' },
     ],
   },
   {
-    id: 'smart_features',
-    title: 'Smart Features',
-    icon: 'Smartphone',
+    id: 'location',
+    title: 'Location',
+    icon: 'MapPin',
     items: [
-      { id: 'smart_thermostat', label: 'Smart Thermostat', type: 'rating' },
-      { id: 'smart_doorbell', label: 'Smart Doorbell', type: 'rating' },
-      { id: 'smart_locks', label: 'Smart Locks', type: 'rating' },
-      { id: 'security_system', label: 'Security System', type: 'rating' },
-      { id: 'smart_lighting', label: 'Smart Lighting', type: 'rating' },
-      { id: 'internet_speed', label: 'Internet Speed/Capability', type: 'rating' },
+      { id: 'street_noise', label: 'Street noise', type: 'rating' },
+      { id: 'privacy', label: 'Privacy', type: 'rating' },
+      { id: 'sunlight', label: 'Sunlight', type: 'rating' },
+      { id: 'parking', label: 'Parking', type: 'rating' },
+      { id: 'walkability', label: 'Walkability', type: 'rating' },
+      { id: 'transit', label: 'Transit access', type: 'rating' },
+      { id: 'schools', label: 'Schools nearby', type: 'rating' },
+      { id: 'grocery_stores', label: 'Grocery stores', type: 'rating' },
+      { id: 'parks', label: 'Parks & recreation', type: 'rating' },
+      { id: 'safety', label: 'Safety', type: 'rating' },
+      { id: 'neighbourhood_feel', label: 'Neighbourhood feel', type: 'rating' },
     ],
   },
   {
@@ -135,11 +133,10 @@ export const EVALUATION_CATEGORIES: EvaluationCategory[] = [
     title: 'Monthly Costs',
     icon: 'DollarSign',
     items: [
-      { id: 'property_taxes_monthly', label: 'Property Taxes (Monthly)', type: 'currency' },
-      { id: 'hoa_condo_fees', label: 'HOA/Condo Fees', type: 'currency' },
-      { id: 'utilities_estimate', label: 'Utilities Estimate', type: 'currency' },
-      { id: 'insurance_estimate', label: 'Home Insurance Estimate', type: 'currency' },
-      { id: 'maintenance_reserve', label: 'Maintenance Reserve', type: 'currency' },
+      { id: 'utilities_cost', label: 'Utilities', type: 'currency' },
+      { id: 'insurance_cost', label: 'Insurance', type: 'currency' },
+      { id: 'condo_fees', label: 'Condo/POTL fees', type: 'currency' },
+      { id: 'other_costs', label: 'Other costs', type: 'currency' },
     ],
   },
   {
@@ -147,11 +144,7 @@ export const EVALUATION_CATEGORIES: EvaluationCategory[] = [
     title: 'Other Observations',
     icon: 'FileText',
     items: [
-      { id: 'general_impressions', label: 'General Impressions', type: 'textarea' },
-      { id: 'concerns_red_flags', label: 'Concerns/Red Flags', type: 'textarea' },
-      { id: 'unique_features', label: 'Unique Features', type: 'textarea' },
-      { id: 'renovation_potential', label: 'Renovation Potential', type: 'textarea' },
-      { id: 'comparable_homes', label: 'Comparison to Other Homes', type: 'textarea' },
+      { id: 'general_notes', label: 'General observations', type: 'textarea' },
     ],
   },
 ];
@@ -169,7 +162,7 @@ export function getTotalEvaluationItems(): number {
 }
 
 export function calculateOverallRating(ratings: {
-  [categoryId: string]: { [itemId: string]: string | number };
+  [categoryId: string]: { [itemId: string]: string | number | boolean };
 }): number {
   let totalValue = 0;
   let totalItems = 0;
@@ -193,7 +186,7 @@ export function calculateOverallRating(ratings: {
 }
 
 export function calculateCompletionPercentage(ratings: {
-  [categoryId: string]: { [itemId: string]: string | number };
+  [categoryId: string]: { [itemId: string]: string | number | boolean };
 }): number {
   let completedItems = 0;
   let totalItems = 0;

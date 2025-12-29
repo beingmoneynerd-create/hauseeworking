@@ -32,19 +32,63 @@ export default function EvaluationItemComponent({
         />
       )}
 
-      {item.type === 'dropdown' && item.options && (
-        <select
-          value={(value as string) || ''}
-          onChange={(e) => onRatingChange(categoryId, item.id, e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-100 focus:border-primary-400"
-        >
-          <option value="">Select an option</option>
+      {item.type === 'radio' && item.options && (
+        <div className="flex gap-3">
           {item.options.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
+            <label key={option} className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name={`${categoryId}-${item.id}`}
+                value={option}
+                checked={(value as string) === option}
+                onChange={(e) => onRatingChange(categoryId, item.id, e.target.value)}
+                className="w-4 h-4 text-primary-400 focus:ring-2 focus:ring-primary-100"
+              />
+              <span className="text-sm font-medium text-gray-700">{option}</span>
+            </label>
           ))}
-        </select>
+        </div>
+      )}
+
+      {item.type === 'checkbox' && (
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={!!(value as boolean)}
+            onChange={(e) => onRatingChange(categoryId, item.id, e.target.checked)}
+            className="w-5 h-5 text-primary-400 rounded focus:ring-2 focus:ring-primary-100"
+          />
+          <span className="text-sm text-gray-600">Has this feature</span>
+        </label>
+      )}
+
+      {item.type === 'checkbox_with_text' && (
+        <div className="space-y-2">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={!!(value as boolean | string)}
+              onChange={(e) => {
+                if (!e.target.checked) {
+                  onRatingChange(categoryId, item.id, false);
+                } else {
+                  onRatingChange(categoryId, item.id, '');
+                }
+              }}
+              className="w-5 h-5 text-primary-400 rounded focus:ring-2 focus:ring-primary-100"
+            />
+            <span className="text-sm text-gray-600">Has this feature</span>
+          </label>
+          {(value as boolean | string) && (
+            <input
+              type="text"
+              value={typeof value === 'string' ? value : ''}
+              onChange={(e) => onRatingChange(categoryId, item.id, e.target.value)}
+              placeholder="Describe the feature..."
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:border-primary-400 focus:ring-2 focus:ring-primary-100"
+            />
+          )}
+        </div>
       )}
 
       {item.type === 'currency' && (
@@ -70,7 +114,7 @@ export default function EvaluationItemComponent({
         />
       )}
 
-      {item.type === 'rating' && (
+      {(item.type === 'rating' || item.type === 'radio') && (
         <div className="mt-3">
           <label className="block text-xs font-medium text-gray-700 mb-1">
             Notes (optional, max 500 characters)
