@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Printer } from 'lucide-react';
 import {
   BudgetPlannerData,
   BudgetCategory,
@@ -210,9 +209,6 @@ export default function BudgetPlannerForm() {
     }).format(value);
   };
 
-  const handlePrint = () => {
-    window.print();
-  };
 
   if (isLoading) {
     return (
@@ -232,13 +228,6 @@ export default function BudgetPlannerForm() {
             <h1 className="text-2xl font-bold text-gray-900">Budget</h1>
             <p className="text-gray-600">Current vs expected savings</p>
           </div>
-          <button
-            onClick={handlePrint}
-            className="no-print p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-            title="Print budget"
-          >
-            <Printer className="w-5 h-5" />
-          </button>
         </div>
 
         <div className="bg-blue-600 rounded-lg p-6 text-white">

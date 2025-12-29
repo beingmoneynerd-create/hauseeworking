@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Check, Printer, RotateCcw, Sparkles, Clock, Package } from 'lucide-react';
+import { Check, RotateCcw, Sparkles, Clock, Package } from 'lucide-react';
 import { MovingTodoList, MovingTodoItemState, ChecklistProgress } from '../../types';
 import { saveMovingTodoList, loadMovingTodoList } from '../../lib/supabaseClient';
 import { MOVING_TASKS, TOTAL_TASKS } from './movingTasksData';
@@ -139,9 +139,6 @@ export default function MovingTodoListForm() {
     setShowResetConfirm(false);
   };
 
-  const handlePrint = () => {
-    window.print();
-  };
 
   if (isLoading) {
     return (
@@ -190,13 +187,6 @@ export default function MovingTodoListForm() {
             </p>
           </div>
           <div className="no-print flex items-center gap-2">
-            <button
-              onClick={handlePrint}
-              className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-              title="Print checklist"
-            >
-              <Printer className="w-5 h-5" />
-            </button>
             <button
               onClick={() => setShowResetConfirm(true)}
               className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"

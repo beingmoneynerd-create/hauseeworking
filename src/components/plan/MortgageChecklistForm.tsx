@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { ChevronDown, ChevronUp, Check, Printer, RotateCcw, Sparkles } from 'lucide-react';
+import { ChevronDown, ChevronUp, Check, RotateCcw, Sparkles } from 'lucide-react';
 import { MortgageChecklist, ChecklistItemState, ChecklistProgress } from '../../types';
 import { saveMortgageChecklist, loadMortgageChecklist } from '../../lib/supabaseClient';
 import { CHECKLIST_SECTIONS, getTotalItemCount } from './checklistData';
@@ -140,9 +140,6 @@ export default function MortgageChecklistForm() {
     setShowResetConfirm(false);
   };
 
-  const handlePrint = () => {
-    window.print();
-  };
 
   if (isLoading) {
     return (
@@ -177,13 +174,6 @@ export default function MortgageChecklistForm() {
             </p>
           </div>
           <div className="no-print flex items-center gap-2">
-            <button
-              onClick={handlePrint}
-              className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-              title="Print checklist"
-            >
-              <Printer className="w-5 h-5" />
-            </button>
             <button
               onClick={() => setShowResetConfirm(true)}
               className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
