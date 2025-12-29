@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Heart, ChevronLeft } from 'lucide-react';
+import { Heart, ChevronLeft, Star, Edit2 } from 'lucide-react';
 import { Home, HomeEvaluation } from '../types';
 import { loadHomes, updateHome, loadEvaluation } from '../lib/supabaseClient';
 import { useToast } from '../components/ToastContainer';
 import LoadingSpinner from '../components/LoadingSpinner';
 import EvaluationModal from '../components/evaluation/EvaluationModal';
+import EditHomeModal from '../components/homedetail/EditHomeModal';
 import HomeDetailsSection from '../components/homedetail/HomeDetailsSection';
 import EvaluationDetailsSection from '../components/homedetail/EvaluationDetailsSection';
 import { useAuth } from '../contexts/AuthContext';
@@ -20,6 +21,7 @@ export default function HomeDetailPage() {
   const [evaluation, setEvaluation] = useState<HomeEvaluation | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showEvaluationModal, setShowEvaluationModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   useEffect(() => {
     if (homeId && user?.id) {
@@ -96,6 +98,20 @@ export default function HomeDetailPage() {
     }
   };
 
+  const handleSaveHomeDetails = async (updates: Partial<Home>) => {
+    if (!home) return;
+
+    try {
+      await updateHome(home.id, updates);
+      setHome({ ...home, ...updates });
+      showSuccess('Home details updated successfully');
+      await loadHomeData();
+    } catch (error) {
+      console.error('Error updating home:', error);
+      showError('Failed to update home details');
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="h-screen flex items-center justify-center">
@@ -123,7 +139,7 @@ export default function HomeDetailPage() {
       </header>
 
       <div className="max-w-5xl mx-auto px-4 py-6">
-        <div className="relative bg-gradient-to-br from-gray-200 to-gray-300 rounded-xl overflow-hidden mb-6" style={{ height: '280px' }}>
+        <div className="relative bg-gradient-to-br from-gray-200 to-gray-300 rounded-xl overflow-hidden mb-4" style={{ height: '280px' }}>
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center">
               <div className="w-32 h-32 mx-auto mb-4 bg-gray-400/30 rounded-full flex items-center justify-center">
@@ -146,19 +162,82 @@ export default function HomeDetailPage() {
           </button>
         </div>
 
+        <div className="bg-white rounded-lg border border-gray-200 p-4 mb-6">
+          <p className="text-sm font-medium text-gray-700 mb-3 text-center">
+            Would you make an offer on this home?
+          </p>
+          <div className="flex gap-3 justify-center">
+            <button
+              onClick={() => handleOfferIntentChange('yes')}
+              className={`flex-1 max-w-[120px] px-6 py-2.5 rounded-lg font-medium transition-all ${
+                home.offerIntent === 'yes'
+                  ? 'bg-green-500 text-white shadow-md'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Yes
+            </button>
+            <button
+              onClick={() => handleOfferIntentChange('maybe')}
+              className={`flex-1 max-w-[120px] px-6 py-2.5 rounded-lg font-medium transition-all ${
+                home.offerIntent === 'maybe'
+                  ? 'bg-yellow-500 text-white shadow-md'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Maybe
+            </button>
+            <button
+              onClick={() => handleOfferIntentChange('no')}
+              className={`flex-1 max-w-[120px] px-6 py-2.5 rounded-lg font-medium transition-all ${
+                home.offerIntent === 'no'
+                  ? 'bg-red-500 text-white shadow-md'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              No
+            </button>
+          </div>
+        </div>
+
         <div className="text-center mb-6">
           <h1 className="text-2xl font-bold text-gray-900 mb-1">{home.address}</h1>
-          <p className="text-gray-600 mb-4">{home.neighborhood}</p>
+          <p className="text-gray-600 mb-3">{home.neighborhood}</p>
+
+          {evaluation && evaluation.overallRating > 0 && (
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <div className="flex items-center gap-1">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    className={`w-5 h-5 ${
+                      star <= Math.round(evaluation.overallRating)
+                        ? 'fill-yellow-400 text-yellow-400'
+                        : 'text-gray-300'
+                    }`}
+                  />
+                ))}
+              </div>
+              <span className="text-lg font-semibold text-gray-900">
+                {evaluation.overallRating.toFixed(1)}
+              </span>
+              <span className="text-sm text-gray-500">
+                ({evaluation.completionPercentage}% complete)
+              </span>
+            </div>
+          )}
+
           <button
             onClick={() => setShowEvaluationModal(true)}
-            className="px-8 py-3 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-colors font-medium shadow-sm"
+            className="inline-flex items-center gap-2 px-5 py-2 text-sm border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
           >
-            Rate this Home
+            <Edit2 className="w-4 h-4" />
+            {evaluation && evaluation.evaluationStatus !== 'not_started' ? 'Edit Rating' : 'Rate this Home'}
           </button>
         </div>
 
         <div className="space-y-6">
-          <HomeDetailsSection home={home} />
+          <HomeDetailsSection home={home} onEdit={() => setShowEditModal(true)} />
           <EvaluationDetailsSection evaluation={evaluation} />
         </div>
       </div>
@@ -169,6 +248,14 @@ export default function HomeDetailPage() {
           evaluation={evaluation}
           onClose={() => setShowEvaluationModal(false)}
           onUpdate={handleEvaluationUpdate}
+        />
+      )}
+
+      {showEditModal && home && (
+        <EditHomeModal
+          home={home}
+          onClose={() => setShowEditModal(false)}
+          onSave={handleSaveHomeDetails}
         />
       )}
     </div>
