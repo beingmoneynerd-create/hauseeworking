@@ -146,7 +146,7 @@ export function EvaluateCompare({ selectedHomeIds, onBack }: EvaluateCompareProp
       </div>
 
       <div className="flex-1 overflow-auto">
-        <CompareTable compareData={displayedHomes} />
+        <CompareTable compareData={displayedHomes} onBack={onBack} />
       </div>
 
       <div className="sticky bottom-0 z-20 bg-white border-t border-gray-200 px-6 py-4">

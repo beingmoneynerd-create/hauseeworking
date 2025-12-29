@@ -1,4 +1,4 @@
-import { Star } from 'lucide-react';
+import { Star, Plus } from 'lucide-react';
 import { EVALUATION_CATEGORIES } from '../../data/evaluationCategories';
 import { CompareCell } from './CompareCell';
 
@@ -42,9 +42,11 @@ interface CompareData {
 
 interface CompareTableProps {
   compareData: CompareData[];
+  onBack?: () => void;
 }
 
-export function CompareTable({ compareData }: CompareTableProps) {
+export function CompareTable({ compareData, onBack }: CompareTableProps) {
+  const showAddHomePrompt = compareData.length === 2;
   const getOfferIntentBadge = (intent: string | null) => {
     if (!intent) return null;
 
@@ -117,6 +119,26 @@ export function CompareTable({ compareData }: CompareTableProps) {
                 </div>
               </th>
             ))}
+            {showAddHomePrompt && (
+              <th className="px-6 py-4 min-w-[280px]">
+                <button
+                  onClick={onBack}
+                  className="w-full h-48 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center gap-3 hover:border-primary-400 hover:bg-primary-50/50 transition-all group"
+                >
+                  <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-primary-100 transition-colors">
+                    <Plus className="w-6 h-6 text-gray-400 group-hover:text-primary-600" />
+                  </div>
+                  <div className="text-center">
+                    <p className="font-medium text-gray-700 group-hover:text-primary-600 transition-colors">
+                      Add Third Home
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Compare up to 3 homes
+                    </p>
+                  </div>
+                </button>
+              </th>
+            )}
           </tr>
         </thead>
 
@@ -132,6 +154,7 @@ export function CompareTable({ compareData }: CompareTableProps) {
                 </span>
               </td>
             ))}
+            {showAddHomePrompt && <td className="px-6 py-3 bg-gray-50/50"></td>}
           </tr>
 
           <tr className="border-b border-gray-200 bg-gray-50">
@@ -145,6 +168,7 @@ export function CompareTable({ compareData }: CompareTableProps) {
                 </span>
               </td>
             ))}
+            {showAddHomePrompt && <td className="px-6 py-3 bg-gray-50/50"></td>}
           </tr>
 
           <tr className="border-b border-gray-200 bg-white">
@@ -158,6 +182,7 @@ export function CompareTable({ compareData }: CompareTableProps) {
                 </span>
               </td>
             ))}
+            {showAddHomePrompt && <td className="px-6 py-3 bg-gray-50/50"></td>}
           </tr>
 
           <tr className="border-b border-gray-200 bg-gray-50">
@@ -171,6 +196,7 @@ export function CompareTable({ compareData }: CompareTableProps) {
                 </span>
               </td>
             ))}
+            {showAddHomePrompt && <td className="px-6 py-3 bg-gray-50/50"></td>}
           </tr>
 
           <tr className="border-b border-gray-200 bg-white">
@@ -184,6 +210,7 @@ export function CompareTable({ compareData }: CompareTableProps) {
                 </div>
               </td>
             ))}
+            {showAddHomePrompt && <td className="px-6 py-3 bg-gray-50/50"></td>}
           </tr>
 
           <tr className="border-b-2 border-gray-300 bg-gray-50">
@@ -195,13 +222,14 @@ export function CompareTable({ compareData }: CompareTableProps) {
                 {getOfferIntentBadge(data.home.offer_intent)}
               </td>
             ))}
+            {showAddHomePrompt && <td className="px-6 py-3 bg-gray-50/50"></td>}
           </tr>
 
           {EVALUATION_CATEGORIES.map((category) => (
             <>
               <tr key={`category-${category.id}`} className="bg-gray-100 border-b border-gray-300">
                 <td
-                  colSpan={compareData.length + 1}
+                  colSpan={showAddHomePrompt ? compareData.length + 2 : compareData.length + 1}
                   className="sticky left-0 z-10 bg-gray-100 px-4 py-3 font-bold text-sm text-gray-900"
                 >
                   {category.title}
@@ -224,6 +252,7 @@ export function CompareTable({ compareData }: CompareTableProps) {
                       </td>
                     );
                   })}
+                  {showAddHomePrompt && <td className="px-6 py-3 bg-gray-50/50"></td>}
                 </tr>
               ))}
             </>
