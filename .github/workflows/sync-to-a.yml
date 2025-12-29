@@ -1,0 +1,45 @@
+name: Create PR to Repo A when B changes
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo B
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Open PR into Repo A
+        env:
+          GH_TOKEN: ${{ secrets.UPSTREAM_TOKEN }}
+          UPSTREAM_REPO: ${{ secrets.UPSTREAM_REPO }}
+        run: |
+          set -euo pipefail
+
+          # Install GitHub CLI if missing
+          if ! command -v gh >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y gh
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          BR="b-sync-$(date +%Y%m%d-%H%M%S)"
+
+          # Create a new branch in B from the current main
+          git checkout -b "$BR"
+          git push origin "$BR"
+
+          # Create a PR into Repo A main
+          gh pr create \
+            --repo "$UPSTREAM_REPO" \
+            --head "$BR" \
+            --base main \
+            --title "Sync from Repo B → Repo A ($BR)" \
+            --body "Automated PR created from changes pushed to Repo B main."
