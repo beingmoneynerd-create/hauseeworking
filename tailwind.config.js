@@ -16,6 +16,10 @@ export default {
           800: '#921d38',
           900: '#7d1c34',
         },
+        coral: {
+          DEFAULT: '#EF4D68',
+          dark: '#e63c5a',
+        },
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
