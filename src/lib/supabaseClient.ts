@@ -644,24 +644,32 @@ export async function loadHomes(userId: string): Promise<{ data: Home[] | null; 
 
 export async function ensureUserWorkspace(userId: string): Promise<{ workspaceId: string | null; error?: string }> {
   try {
+    console.log('[ensureUserWorkspace] Starting for userId:', userId);
+
     // First, check if user already has a workspace membership
-    const { data: membership } = await supabase
+    const { data: membership, error: membershipError } = await supabase
       .from('workspace_members')
       .select('workspace_id')
       .eq('user_id', userId)
       .maybeSingle();
 
+    console.log('[ensureUserWorkspace] Membership check:', { membership, membershipError });
+
     if (membership?.workspace_id) {
+      console.log('[ensureUserWorkspace] Found existing workspace:', membership.workspace_id);
       return { workspaceId: membership.workspace_id };
     }
 
     // Get the user's UUID from auth
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    console.log('[ensureUserWorkspace] Auth user:', { user: user?.id, authError });
+
     if (!user) {
       return { workspaceId: null, error: 'User not authenticated' };
     }
 
     // Create a workspace for the user
+    console.log('[ensureUserWorkspace] Creating workspace with created_by:', user.id);
     const { data: workspace, error: workspaceError } = await supabase
       .from('workspaces')
       .insert({
@@ -671,12 +679,15 @@ export async function ensureUserWorkspace(userId: string): Promise<{ workspaceId
       .select('id')
       .single();
 
+    console.log('[ensureUserWorkspace] Workspace creation result:', { workspace, workspaceError });
+
     if (workspaceError || !workspace) {
       console.error('Error creating workspace:', workspaceError);
       return { workspaceId: null, error: workspaceError?.message || 'Failed to create workspace' };
     }
 
     // Add user as owner of the workspace
+    console.log('[ensureUserWorkspace] Adding workspace member:', { workspace_id: workspace.id, user_id: userId });
     const { error: memberError } = await supabase
       .from('workspace_members')
       .insert({
@@ -685,11 +696,14 @@ export async function ensureUserWorkspace(userId: string): Promise<{ workspaceId
         role: 'owner',
       });
 
+    console.log('[ensureUserWorkspace] Workspace member addition result:', { memberError });
+
     if (memberError) {
       console.error('Error adding workspace member:', memberError);
       return { workspaceId: null, error: memberError.message };
     }
 
+    console.log('[ensureUserWorkspace] Successfully created workspace:', workspace.id);
     return { workspaceId: workspace.id };
   } catch (err) {
     console.error('Error ensuring workspace:', err);
@@ -705,8 +719,12 @@ export async function addHome(
   formData: AddHomeFormData
 ): Promise<{ success: boolean; error?: string; home?: Home }> {
   try {
+    console.log('[addHome] Starting for userId:', userId);
+
     // Ensure user has a workspace
     const { workspaceId, error: workspaceError } = await ensureUserWorkspace(userId);
+    console.log('[addHome] ensureUserWorkspace result:', { workspaceId, workspaceError });
+
     if (!workspaceId || workspaceError) {
       return { success: false, error: workspaceError || 'Failed to initialize workspace' };
     }
@@ -730,11 +748,15 @@ export async function addHome(
       updated_at: new Date().toISOString(),
     };
 
+    console.log('[addHome] Inserting home record:', record);
+
     const { data, error } = await supabase
       .from('homes')
       .insert(record)
       .select()
       .single();
+
+    console.log('[addHome] Insert result:', { data, error });
 
     if (error) {
       console.error('Error adding home:', error);
@@ -763,6 +785,7 @@ export async function addHome(
       updatedAt: data.updated_at,
     };
 
+    console.log('[addHome] Successfully created home:', home.id);
     return { success: true, home };
   } catch (err) {
     console.error('Error adding home:', err);

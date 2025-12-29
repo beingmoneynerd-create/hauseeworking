@@ -78,7 +78,8 @@ export default function EvaluateTab() {
       setShowAddModal(false);
       showSuccess('Home added successfully!');
     } else {
-      showError('Failed to add home. Please try again.');
+      console.error('Error adding home:', result.error);
+      showError(result.error || 'Failed to add home. Please try again.');
     }
   };
 
