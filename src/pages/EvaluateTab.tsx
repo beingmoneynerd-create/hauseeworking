@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Plus, Home as HomeIcon, Heart, X, Mountain, Printer, ChevronDown, Search } from 'lucide-react';
 import { EvaluateTabType, Home, AddHomeFormData } from '../types';
 import { loadHomes, addHome, updateHome } from '../lib/supabaseClient';
@@ -8,28 +8,16 @@ import EmptyState from '../components/EmptyState';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { useToast } from '../components/ToastContainer';
 import { useAuth } from '../contexts/AuthContext';
-import EvaluateBrowse from './EvaluateBrowse';
-import { useHomes } from '../hooks/useHomes';
 
 export default function EvaluateTab() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState<EvaluateTabType>('browse');
   const [homes, setHomes] = useState<Home[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const [fadeTransition, setFadeTransition] = useState(false);
-  const [compareMode, setCompareMode] = useState(false);
   const { showSuccess, showError } = useToast();
-  const { homes: homesFromHook } = useHomes();
-
-  useEffect(() => {
-    const tab = searchParams.get('tab');
-    if (tab === 'compare') {
-      setActiveTab('compare');
-    }
-  }, [searchParams]);
 
   useEffect(() => {
     loadHomesData();
@@ -38,6 +26,7 @@ export default function EvaluateTab() {
   const loadHomesData = async () => {
     setIsLoading(true);
     try {
+      // Load homes for authenticated users only, otherwise show empty
       if (user?.id) {
         const { data } = await loadHomes(user.id);
         if (data) {
@@ -120,7 +109,7 @@ export default function EvaluateTab() {
     await updateHome(homeId, { compareSelected: newCompareState });
   };
 
-  const compareCount = homesFromHook.filter((h) => h.compare_selected).length;
+  const compareCount = homes.filter((h) => h.compareSelected).length;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -180,15 +169,22 @@ export default function EvaluateTab() {
 
       <div className={`transition-opacity duration-300 ${fadeTransition ? 'opacity-0' : 'opacity-100'}`}>
         {activeTab === 'browse' && (
-          <EvaluateBrowse compareMode={compareMode} onCompareModeChange={setCompareMode} />
+          <BrowseView
+            homes={homes}
+            isLoading={isLoading}
+            onAddHome={() => setShowAddModal(true)}
+            onToggleFavorite={handleToggleFavorite}
+            onToggleCompare={handleToggleCompare}
+            compareCount={compareCount}
+          />
         )}
         {activeTab === 'compare' && (
           <CompareView
-            homes={homesFromHook.filter((h) => h.compare_selected)}
+            homes={homes.filter((h) => h.compareSelected)}
             onRemoveFromCompare={handleToggleCompare}
             onBackToBrowse={() => setActiveTab('browse')}
             onClearAll={() => {
-              homesFromHook.filter((h) => h.compare_selected).forEach((h) => handleToggleCompare(h.id));
+              homes.filter((h) => h.compareSelected).forEach((h) => handleToggleCompare(h.id));
             }}
           />
         )}
@@ -196,6 +192,10 @@ export default function EvaluateTab() {
           <InspectionView homes={homes} onBackToBrowse={() => setActiveTab('browse')} />
         )}
       </div>
+
+      {showAddModal && (
+        <AddHomeModal onClose={() => setShowAddModal(false)} onSubmit={handleAddHome} />
+      )}
     </div>
   );
 }
@@ -759,9 +759,9 @@ function CompareView({ homes, onRemoveFromCompare, onBackToBrowse, onClearAll }:
                       <X className="w-4 h-4 text-gray-600" />
                     </button>
                     <div className="mb-3">
-                      {home.primary_photo ? (
+                      {home.primaryPhoto ? (
                         <img
-                          src={home.primary_photo}
+                          src={home.primaryPhoto}
                           alt={home.address}
                           className="w-full h-28 object-cover rounded-lg"
                         />
@@ -816,21 +816,21 @@ function CompareView({ homes, onRemoveFromCompare, onBackToBrowse, onClearAll }:
               <ComparisonRow label="Year Built">
                 {homes.map((home) => (
                   <td key={home.id} className="p-4 text-center text-gray-900">
-                    {home.year_built || '---'}
+                    {home.yearBuilt || '---'}
                   </td>
                 ))}
               </ComparisonRow>
               <ComparisonRow label="Square Footage">
                 {homes.map((home) => (
                   <td key={home.id} className="p-4 text-center text-gray-900">
-                    {home.square_footage ? home.square_footage.toLocaleString() : '---'}
+                    {home.squareFootage ? home.squareFootage.toLocaleString() : '---'}
                   </td>
                 ))}
               </ComparisonRow>
               <ComparisonRow label="Property Taxes (Annual)">
                 {homes.map((home) => (
                   <td key={home.id} className="p-4 text-center text-gray-900">
-                    {home.property_taxes ? formatCurrency(home.property_taxes) : '---'}
+                    {home.propertyTaxes ? formatCurrency(home.propertyTaxes) : '---'}
                   </td>
                 ))}
               </ComparisonRow>
@@ -840,7 +840,7 @@ function CompareView({ homes, onRemoveFromCompare, onBackToBrowse, onClearAll }:
                     <div className="flex items-center justify-center gap-1">
                       <span className="text-yellow-500">★</span>
                       <span className="font-semibold text-gray-900">
-                        {home.overall_rating.toFixed(1)}
+                        {home.overallRating.toFixed(1)}
                       </span>
                       <span className="text-gray-500 text-sm">/5.0</span>
                     </div>
@@ -850,20 +850,20 @@ function CompareView({ homes, onRemoveFromCompare, onBackToBrowse, onClearAll }:
               <ComparisonRow label="Offer Intent">
                 {homes.map((home) => (
                   <td key={home.id} className="p-4 text-center">
-                    {home.offer_intent ? (
+                    {home.offerIntent ? (
                       <span
                         className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${
-                          home.offer_intent === 'yes'
+                          home.offerIntent === 'yes'
                             ? 'bg-green-100 text-green-800'
-                            : home.offer_intent === 'maybe'
+                            : home.offerIntent === 'maybe'
                             ? 'bg-yellow-100 text-yellow-800'
                             : 'bg-red-100 text-red-800'
                         }`}
                       >
                         <span>
-                          {home.offer_intent === 'yes' ? '🟢' : home.offer_intent === 'maybe' ? '🟡' : '🔴'}
+                          {home.offerIntent === 'yes' ? '🟢' : home.offerIntent === 'maybe' ? '🟡' : '🔴'}
                         </span>
-                        {home.offer_intent.charAt(0).toUpperCase() + home.offer_intent.slice(1)}
+                        {home.offerIntent.charAt(0).toUpperCase() + home.offerIntent.slice(1)}
                       </span>
                     ) : (
                       <span className="text-gray-400">---</span>
@@ -879,16 +879,16 @@ function CompareView({ homes, onRemoveFromCompare, onBackToBrowse, onClearAll }:
                   <td key={home.id} className="p-4 text-center">
                     <span
                       className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
-                        home.evaluation_status === 'completed'
+                        home.evaluationStatus === 'completed'
                           ? 'bg-green-100 text-green-800'
-                          : home.evaluation_status === 'in_progress'
+                          : home.evaluationStatus === 'in_progress'
                           ? 'bg-blue-100 text-blue-800'
                           : 'bg-gray-100 text-gray-800'
                       }`}
                     >
-                      {home.evaluation_status === 'completed'
+                      {home.evaluationStatus === 'completed'
                         ? 'Completed'
-                        : home.evaluation_status === 'in_progress'
+                        : home.evaluationStatus === 'in_progress'
                         ? 'In Progress'
                         : 'Not Started'}
                     </span>
