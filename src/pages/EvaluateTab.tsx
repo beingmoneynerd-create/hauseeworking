@@ -202,19 +202,6 @@ export default function EvaluateTab({ initialHomeId }: EvaluateTabProps) {
               </button>
             </div>
           </div>
-
-          <div className="text-center mt-2 text-xs text-gray-500">
-            {activeTab === 'browse' && (
-              <span className="md:hidden">Swipe left to Compare</span>
-            )}
-            {activeTab === 'compare' && (
-              <span className="md:hidden">Swipe left to Inspection or right to Browse</span>
-            )}
-            {activeTab === 'inspection' && (
-              <span className="md:hidden">Swipe right to Compare</span>
-            )}
-            <span className="hidden md:inline">Use arrow buttons or click tabs to navigate</span>
-          </div>
         </div>
       </div>
 
