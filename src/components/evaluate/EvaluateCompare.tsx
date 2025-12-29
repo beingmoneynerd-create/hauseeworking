@@ -2,13 +2,16 @@ import { ArrowLeft, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { useCompare } from '../../hooks/useCompare';
 import { CompareTable } from './CompareTable';
+import { Home } from '../../types';
 
 interface EvaluateCompareProps {
   selectedHomeIds: string[];
   onBack: () => void;
+  allHomes: Home[];
+  onToggleCompare: (homeId: string) => Promise<{ success: boolean; error?: string }>;
 }
 
-export function EvaluateCompare({ selectedHomeIds, onBack }: EvaluateCompareProps) {
+export function EvaluateCompare({ selectedHomeIds, onBack, allHomes, onToggleCompare }: EvaluateCompareProps) {
   const { compareData, loading, error } = useCompare(selectedHomeIds);
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -146,7 +149,12 @@ export function EvaluateCompare({ selectedHomeIds, onBack }: EvaluateCompareProp
       </div>
 
       <div className="flex-1 overflow-auto">
-        <CompareTable compareData={displayedHomes} onBack={onBack} />
+        <CompareTable
+          compareData={displayedHomes}
+          onBack={onBack}
+          availableHomes={allHomes.filter(h => !selectedHomeIds.includes(h.id))}
+          onAddHome={onToggleCompare}
+        />
       </div>
 
       <div className="sticky bottom-0 z-20 bg-white border-t border-gray-200 px-6 py-4">

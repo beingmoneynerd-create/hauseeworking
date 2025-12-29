@@ -43,10 +43,18 @@ interface CompareData {
 interface CompareTableProps {
   compareData: CompareData[];
   onBack?: () => void;
+  availableHomes?: Home[];
+  onAddHome?: (homeId: string) => Promise<{ success: boolean; error?: string }>;
 }
 
-export function CompareTable({ compareData, onBack }: CompareTableProps) {
+export function CompareTable({ compareData, onBack, availableHomes = [], onAddHome }: CompareTableProps) {
   const showAddHomePrompt = compareData.length === 2;
+
+  const handleHomeSelect = async (homeId: string) => {
+    if (onAddHome) {
+      await onAddHome(homeId);
+    }
+  };
   const getOfferIntentBadge = (intent: string | null) => {
     if (!intent) return null;
 
@@ -121,22 +129,41 @@ export function CompareTable({ compareData, onBack }: CompareTableProps) {
             ))}
             {showAddHomePrompt && (
               <th className="px-6 py-4 min-w-[280px]">
-                <button
-                  onClick={onBack}
-                  className="w-full h-48 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center gap-3 hover:border-primary-400 hover:bg-primary-50/50 transition-all group"
-                >
-                  <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-primary-100 transition-colors">
-                    <Plus className="w-6 h-6 text-gray-400 group-hover:text-primary-600" />
+                <div className="w-full h-48 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center gap-4 p-4">
+                  <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
+                    <Plus className="w-6 h-6 text-gray-400" />
                   </div>
-                  <div className="text-center">
-                    <p className="font-medium text-gray-700 group-hover:text-primary-600 transition-colors">
+                  <div className="text-center w-full">
+                    <p className="font-medium text-gray-700 mb-3">
                       Add Third Home
                     </p>
-                    <p className="text-sm text-gray-500">
-                      Compare up to 3 homes
-                    </p>
+                    {availableHomes.length > 0 ? (
+                      <select
+                        onChange={(e) => {
+                          if (e.target.value) {
+                            handleHomeSelect(e.target.value);
+                          }
+                        }}
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-400 focus:border-transparent"
+                        defaultValue=""
+                      >
+                        <option value="" disabled>Select a home...</option>
+                        {availableHomes.map((home) => (
+                          <option key={home.id} value={home.id}>
+                            {home.address} - {home.city}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <button
+                        onClick={onBack}
+                        className="w-full px-4 py-2 text-sm text-primary-600 hover:text-primary-700 font-medium transition-colors"
+                      >
+                        Add more homes in Browse
+                      </button>
+                    )}
                   </div>
-                </button>
+                </div>
               </th>
             )}
           </tr>

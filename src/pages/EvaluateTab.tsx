@@ -247,6 +247,8 @@ export default function EvaluateTab({ initialHomeId }: EvaluateTabProps) {
               <EvaluateCompare
                 selectedHomeIds={comparableHomes.map((h) => h.id)}
                 onBack={() => setActiveTab('browse')}
+                allHomes={homes}
+                onToggleCompare={handleToggleCompare}
               />
             )}
             {activeTab === 'inspection' && (
