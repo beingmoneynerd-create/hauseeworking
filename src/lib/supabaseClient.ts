@@ -688,12 +688,11 @@ export async function ensureUserWorkspace(userId: string): Promise<{ workspaceId
     }
 
     // Create a workspace for the user
-    console.log('[ensureUserWorkspace] Creating workspace with created_by:', user.id);
+    console.log('[ensureUserWorkspace] Creating workspace for user:', user.id);
     const { data: workspace, error: workspaceError } = await supabase
       .from('workspaces')
       .insert({
         name: 'My Workspace',
-        created_by: user.id,
       })
       .select('id')
       .single();
