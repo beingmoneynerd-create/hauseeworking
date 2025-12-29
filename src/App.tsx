@@ -3,7 +3,6 @@ import { ToastProvider } from './components/ToastContainer';
 
 import Dashboard from './components/Dashboard';
 import NotFoundPage from './pages/NotFoundPage';
-import HomeDetailPage from './pages/HomeDetailPage';
 
 import SignInPage from './pages/SignInPage';
 import SignUpPage from './pages/SignUpPage';
@@ -29,7 +28,7 @@ function App() {
           {/* Main app routes - public browsing */}
           <Route path="/plan" element={<Dashboard />} />
           <Route path="/evaluate" element={<Dashboard />} />
-          <Route path="/evaluate/:homeId" element={<HomeDetailPage />} />
+          <Route path="/evaluate/:homeId" element={<Dashboard />} />
           <Route path="/select" element={<Dashboard />} />
           <Route path="/guide" element={<Dashboard />} />
           <Route path="/ai" element={<Dashboard />} />
